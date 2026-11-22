@@ -1,0 +1,25 @@
+# Whitelist: everything is ignored unless allowed below.
+/*
+!/.gitignore
+!/.github/
+!/hooks/
+!/scripts/
+!/spec/
+!/src/
+!/tests/
+!/LICENSE
+!/README.md
+!/pyproject.toml
+!/uv.lock
+
+# Denies last (they win over the allows above).
+__pycache__/
+*.pyc
+.venv/
+dist/
+.env*
+*.env
+*.key
+*secret*
+*keypair*
+*.local.*

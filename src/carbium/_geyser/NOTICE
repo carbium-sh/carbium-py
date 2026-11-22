@@ -1,0 +1,11 @@
+The modules in this folder are generated from the Yellowstone gRPC protocol definitions of the yellowstone-grpc
+project by Triton One (https://github.com/rpcpool/yellowstone-grpc), licensed under the Apache License 2.0 (the
+LICENSE file here is that folder's licence, LICENSE_APACHE2).
+
+Taken: yellowstone-grpc-proto/proto/geyser.proto and yellowstone-grpc-proto/proto/solana-storage.proto at commit
+3c66a659b947e6df09136fc7570bf9918588e2fb (release v17.0.2+solana.4.4.1).
+
+Changed: two lines are removed from geyser.proto's Geyser service, the SubscribeDeshred and SubscribeGossip calls,
+which Carbon Stream does not serve. No message is changed, so the served calls keep their wire format and paths.
+solana-storage.proto is unchanged. The modules were generated with grpcio-tools 1.85.3, and their imports made
+relative to this package.

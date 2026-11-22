@@ -1,0 +1,46 @@
+[build-system]
+requires = ["uv_build>=0.13.9,<0.14"]
+build-backend = "uv_build"
+
+[project]
+name = "carbium"
+version = "0.1.0"
+description = "Typed Python client for Carbium's Solana services: RPC, DAS, quote and swap, WebSocket subscriptions, Carbon Stream, webhooks, the account API, DCA and the token API"
+readme = "README.md"
+license = "MIT AND Apache-2.0"
+license-files = ["LICENSE", "src/carbium/_geyser/LICENSE", "src/carbium/_geyser/NOTICE"]
+requires-python = ">=3.11"
+dependencies = ["httpx>=0.28.1,<0.29", "websockets>=17.4,<18"]
+
+keywords = ["solana", "rpc", "das", "websocket", "yellowstone", "grpc", "swap", "dca", "webhooks", "carbium"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Framework :: AsyncIO",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
+  "Topic :: Software Development :: Libraries",
+  "Typing :: Typed",
+]
+
+[project.optional-dependencies]
+# Carbon Stream: the generated modules need grpcio 1.85.3 and protobuf 7.35.1 or newer within their majors.
+stream = ["grpcio>=1.85.3,<2", "protobuf>=7.35.1,<8"]
+
+[project.urls]
+Homepage = "https://carbium.sh"
+Documentation = "https://carbium.sh/docs"
+Repository = "https://github.com/carbium-sh/carbium-py"
+Issues = "https://github.com/carbium-sh/carbium-py/issues"
+
+[dependency-groups]
+dev = ["pytest>=9.2", "grpcio-tools==1.85.3"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
