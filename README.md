@@ -1,7 +1,7 @@
 # carbium
 
 Typed Python client for Carbium's Solana services on [services.carbium.sh](https://carbium.sh): JSON-RPC (every
-served method, DAS included), quote and swap (`quote`, `swap`, `prices`, `health` and the REST quote), WebSocket
+served method, DAS included), quote and swap (`quote`, `swap`, `prices` and `health`), WebSocket
 subscriptions, Carbon Stream (Yellowstone gRPC, an optional extra), the account API, webhook signature checks, the DCA
 API on the dex and the token API. Blocking and asyncio clients. Python 3.11 and newer. Types ship with the package.
 
@@ -13,7 +13,8 @@ with `encoding` set to `base64`. Every method it offers is served; what the serv
 pip install carbium
 ```
 
-Carbon Stream needs the extra: `pip install 'carbium[stream]'`.
+Carbon Stream needs the extra: `pip install 'carbium[stream]'`. To update: `pip install -U carbium`; each version's
+notes are at https://github.com/carbium-sh/carbium-py/releases.
 
 ## Quick start
 
@@ -59,8 +60,12 @@ results = carbium.batch([("getSlot", []), ("getHealth", [])])
 # A transaction your own wallet signed, sent as base64. It is never sent twice.
 signature = carbium.send_transaction(signed_base64, {"encoding": "base64"})
 
-# The REST quote, GET /cq1/quote: every value of the answer is a string.
-quote = carbium.cq1_quote(SOL, USDC, 100_000_000, 50)
+# A quote, and one with a cap on the accounts the swap instruction may carry and your own integrator fee.
+quote = carbium.quote(src_mint=SOL, dst_mint=USDC, amount_in=100_000_000, slippage_bps=50)
+capped = carbium.quote(src_mint=SOL, dst_mint=USDC, amount_in=100_000_000, slippage_bps=50,
+                       maxAccounts=32, integrator_fee_bps=25, integrator_fee_account=treasury)
+# capped["integratorFee"] is {amount, feeBps, mint, account}; destAmountOut and minAmountOut are what the trader
+# receives after it.
 
 # The same calls on asyncio.
 async def latest_slot() -> int:
@@ -72,6 +77,12 @@ Token scans (`getTokenAccountsByOwner`, `getTokenAccountsByDelegate`) are billed
 `getProgramAccounts` costs 505; a `getTransactionsForAddress` walk costs 55 plus 50 per upstream call after the first,
 up to 51,255 at `limit` 1000. Name a mint, keep `limit` small, and read the method notes at
 https://carbium.sh/skill.md before running one in a loop.
+
+The integrator fee is taken in the token `integratorFee.mint` names. A token fee goes to that wallet's associated token
+account, which must already exist; a fee that cannot be paid is skipped and the swap still lands. A quote with no route
+under `maxAccounts` answers `-32055` (kind `route`): change the ask, a retry gives the same answer.
+
+`GET /cq1/quote` is the old quote path, kept for callers already on it (`cq1_quote`); new code uses `quote`.
 
 ## Errors and retries
 

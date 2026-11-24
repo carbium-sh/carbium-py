@@ -44,7 +44,7 @@ def _kind(status: int, code: Any, reason: str | None) -> str:
         return "upstream"
     if code in _REQUEST_CODES or reason in _REQUEST_REASONS:
         return "request"
-    if isinstance(code, int) and (-32054 <= code <= -32051 or -32099 <= code <= -32060):
+    if isinstance(code, int) and -32099 <= code <= -32051:
         return "route"
     return "node"
 

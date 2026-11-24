@@ -3,7 +3,7 @@
  "info": {
   "title": "carbium account API",
   "version": "1",
-  "description": "Run a carbium account by API. With an account API key (c_acct_...): service keys and their policies, webhooks, usage and telemetry; a key cannot buy, upgrade or cancel anything. With a session (a wallet signature or an e-mailed code): the same, and buying, renewing and closing the account. Docs: /docs#account-api-keys"
+  "description": "Run a carbium account by API. With an account API key (c_acct_...): service keys and their policies, webhooks, usage and telemetry; a key cannot buy, upgrade or cancel anything. With a session (a wallet signature or an e-mailed code): the same, and buying, renewing and closing the account. Docs: /docs/account-api-keys"
  },
  "servers": [
   {
@@ -94,7 +94,7 @@
     }
    },
    "TooMany": {
-    "description": "too many calls: wait Retry-After seconds",
+    "description": "too many calls: back off and retry; wait Retry-After seconds when the answer carries it",
     "content": {
      "application/json": {
       "schema": {

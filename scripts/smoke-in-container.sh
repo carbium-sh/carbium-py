@@ -16,7 +16,7 @@ grep -qx 'carbium/_geyser/NOTICE' files.txt || { echo "the wheel holds no NOTICE
 if grep -E '(^|/)(tests?/|scripts/|conftest\.py|test_[^/]*\.py)' files.txt; then echo "a test or script file in the wheel"; exit 1; fi
 version=$(python -c "import carbium; print(carbium.__version__)")
 echo "carbium $version"
-[ "$version" = "0.1.0" ] || { echo "the version is not 0.1.0"; exit 1; }
+[ "$version" = "0.1.1" ] || { echo "the version is not 0.1.1"; exit 1; }
 echo "--- quick start from the installed README"
 python -c "import importlib.metadata as m, re; text = m.distribution('carbium').read_text('METADATA'); print(re.search(r'\`\`\`python\n(.*?)\`\`\`', text, re.S).group(1))" > quickstart.py
 test -s quickstart.py

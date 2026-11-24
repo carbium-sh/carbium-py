@@ -85,7 +85,7 @@ class Carbium(RpcMethods):
         return self._transport.batch(calls)
 
     def cq1_quote(self, src_mint: str, dst_mint: str, amount_in: int | str, slippage_bps: int) -> Cq1Quote:
-        """GET /cq1/quote: the quote as one plain object. Admitted as the quote method: same scope, plan and rate."""
+        """GET /cq1/quote, the old quote path, kept for callers already on it; new code uses quote(). Admitted as the quote method: same scope, plan and rate."""
         return self._transport.rest("/cq1/quote", _cq1(src_mint, dst_mint, amount_in, slippage_bps), "cq1_quote")
 
     def close(self) -> None:
@@ -119,6 +119,7 @@ class AsyncCarbium(AsyncRpcMethods):
         return await self._transport.batch(calls)
 
     async def cq1_quote(self, src_mint: str, dst_mint: str, amount_in: int | str, slippage_bps: int) -> Cq1Quote:
+        """GET /cq1/quote, the old quote path, kept for callers already on it; new code uses quote()."""
         return await self._transport.rest("/cq1/quote", _cq1(src_mint, dst_mint, amount_in, slippage_bps), "cq1_quote")
 
     async def aclose(self) -> None:

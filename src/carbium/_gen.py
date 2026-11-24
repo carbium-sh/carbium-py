@@ -388,6 +388,7 @@ class Quote(TypedDict):
     routePlan: list[RouteLeg]
     quoteId: str
     platformFee: NotRequired[QuotePlatformFee]
+    integratorFee: NotRequired[QuoteIntegratorFee]
     txVersion: NotRequired[Literal[1]]
     swapTag: NotRequired[Literal[1]]
     partial: NotRequired[Literal[True]]
@@ -397,6 +398,12 @@ class QuotePlatformFee(TypedDict):
     amount: str
     feeBps: Number
     mint: Base58
+
+class QuoteIntegratorFee(TypedDict):
+    amount: str
+    feeBps: Number
+    mint: Base58
+    account: Base58
 
 class QuoteHealth(TypedDict):
     ok: bool
@@ -420,6 +427,9 @@ class QuoteParams(TypedDict):
     dexes: NotRequired[str | list[str]]
     txVersion: NotRequired[Literal[0, 1]]
     swapTag: NotRequired[Literal[0, 1]]
+    maxAccounts: NotRequired[Number]
+    integrator_fee_bps: NotRequired[Number | str]
+    integrator_fee_account: NotRequired[Base58]
 
 class Reward(TypedDict):
     pubkey: Base58
@@ -1144,8 +1154,8 @@ class RpcMethods:
     def qn_estimate_priority_fees(self, *, last_n_blocks: Number | None = None, account: Base58 | None = None, api_version: Number | None = None) -> QnPriorityFees:
         return self._call("qn_estimatePriorityFees", _named({"last_n_blocks": last_n_blocks, "account": account, "api_version": api_version}))
 
-    def quote(self, *, src_mint: Base58, dst_mint: Base58, amount_in: Number | str, slippage_bps: Number, dex: str | list[str] | None = None, dexes: str | list[str] | None = None, txVersion: Literal[0, 1] | None = None, swapTag: Literal[0, 1] | None = None) -> Quote:
-        return self._call("quote", _named({"src_mint": src_mint, "dst_mint": dst_mint, "amount_in": amount_in, "slippage_bps": slippage_bps, "dex": dex, "dexes": dexes, "txVersion": txVersion, "swapTag": swapTag}))
+    def quote(self, *, src_mint: Base58, dst_mint: Base58, amount_in: Number | str, slippage_bps: Number, dex: str | list[str] | None = None, dexes: str | list[str] | None = None, txVersion: Literal[0, 1] | None = None, swapTag: Literal[0, 1] | None = None, maxAccounts: Number | None = None, integrator_fee_bps: Number | str | None = None, integrator_fee_account: Base58 | None = None) -> Quote:
+        return self._call("quote", _named({"src_mint": src_mint, "dst_mint": dst_mint, "amount_in": amount_in, "slippage_bps": slippage_bps, "dex": dex, "dexes": dexes, "txVersion": txVersion, "swapTag": swapTag, "maxAccounts": maxAccounts, "integrator_fee_bps": integrator_fee_bps, "integrator_fee_account": integrator_fee_account}))
 
     def search_assets(self, *, page: Number | None = None, limit: Number | None = None, cursor: str | None = None, before: str | None = None, after: str | None = None, sortBy: DasSort | None = None, options: DasDisplayOptions | None = None, displayOptions: DasDisplayOptions | None = None, ownerAddress: Base58 | None = None, creatorAddress: Base58 | None = None, creatorVerified: bool | None = None, authorityAddress: Base58 | None = None, grouping: DasGrouping | None = None, interface: str | None = None, tokenType: DasTokenType | None = None, frozen: bool | None = None, delegate: Base58 | None = None, burnt: bool | None = None, compressed: bool | None = None, negate: Literal[False] | None = None, conditionType: Literal['all'] | None = None) -> DasAssetList:
         return self._call("searchAssets", _named({"page": page, "limit": limit, "cursor": cursor, "before": before, "after": after, "sortBy": sortBy, "options": options, "displayOptions": displayOptions, "ownerAddress": ownerAddress, "creatorAddress": creatorAddress, "creatorVerified": creatorVerified, "authorityAddress": authorityAddress, "grouping": grouping, "interface": interface, "tokenType": tokenType, "frozen": frozen, "delegate": delegate, "burnt": burnt, "compressed": compressed, "negate": negate, "conditionType": conditionType}))
@@ -1355,8 +1365,8 @@ class AsyncRpcMethods:
     async def qn_estimate_priority_fees(self, *, last_n_blocks: Number | None = None, account: Base58 | None = None, api_version: Number | None = None) -> QnPriorityFees:
         return await self._call("qn_estimatePriorityFees", _named({"last_n_blocks": last_n_blocks, "account": account, "api_version": api_version}))
 
-    async def quote(self, *, src_mint: Base58, dst_mint: Base58, amount_in: Number | str, slippage_bps: Number, dex: str | list[str] | None = None, dexes: str | list[str] | None = None, txVersion: Literal[0, 1] | None = None, swapTag: Literal[0, 1] | None = None) -> Quote:
-        return await self._call("quote", _named({"src_mint": src_mint, "dst_mint": dst_mint, "amount_in": amount_in, "slippage_bps": slippage_bps, "dex": dex, "dexes": dexes, "txVersion": txVersion, "swapTag": swapTag}))
+    async def quote(self, *, src_mint: Base58, dst_mint: Base58, amount_in: Number | str, slippage_bps: Number, dex: str | list[str] | None = None, dexes: str | list[str] | None = None, txVersion: Literal[0, 1] | None = None, swapTag: Literal[0, 1] | None = None, maxAccounts: Number | None = None, integrator_fee_bps: Number | str | None = None, integrator_fee_account: Base58 | None = None) -> Quote:
+        return await self._call("quote", _named({"src_mint": src_mint, "dst_mint": dst_mint, "amount_in": amount_in, "slippage_bps": slippage_bps, "dex": dex, "dexes": dexes, "txVersion": txVersion, "swapTag": swapTag, "maxAccounts": maxAccounts, "integrator_fee_bps": integrator_fee_bps, "integrator_fee_account": integrator_fee_account}))
 
     async def search_assets(self, *, page: Number | None = None, limit: Number | None = None, cursor: str | None = None, before: str | None = None, after: str | None = None, sortBy: DasSort | None = None, options: DasDisplayOptions | None = None, displayOptions: DasDisplayOptions | None = None, ownerAddress: Base58 | None = None, creatorAddress: Base58 | None = None, creatorVerified: bool | None = None, authorityAddress: Base58 | None = None, grouping: DasGrouping | None = None, interface: str | None = None, tokenType: DasTokenType | None = None, frozen: bool | None = None, delegate: Base58 | None = None, burnt: bool | None = None, compressed: bool | None = None, negate: Literal[False] | None = None, conditionType: Literal['all'] | None = None) -> DasAssetList:
         return await self._call("searchAssets", _named({"page": page, "limit": limit, "cursor": cursor, "before": before, "after": after, "sortBy": sortBy, "options": options, "displayOptions": displayOptions, "ownerAddress": ownerAddress, "creatorAddress": creatorAddress, "creatorVerified": creatorVerified, "authorityAddress": authorityAddress, "grouping": grouping, "interface": interface, "tokenType": tokenType, "frozen": frozen, "delegate": delegate, "burnt": burnt, "compressed": compressed, "negate": negate, "conditionType": conditionType}))

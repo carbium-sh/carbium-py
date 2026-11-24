@@ -16,7 +16,7 @@ README = Path(__file__).resolve().parent.parent / "README.md"
 # The names each block takes from the text around it, keyed by the block's first line after its plain imports.
 DECLARES: dict[str, set[str]] = {
     "from carbium import Carbium, CarbiumError": set(),
-    "from carbium import AsyncCarbium, Carbium": {"a", "b", "mint", "signed_base64", "SOL", "USDC"},
+    "from carbium import AsyncCarbium, Carbium": {"a", "b", "mint", "signed_base64", "SOL", "USDC", "treasury"},
     "from carbium import CarbiumSocket": {"pubkey"},
     "from carbium import CarbiumStream": {"program_id", "handle", "reload_over_rpc"},
     "from carbium import verify_webhook": {"raw_body", "request"},

@@ -230,7 +230,7 @@ def test_the_async_client_follows_the_same_rules(planted):
     assert (e.kind, len(planted.requests)) == ("credits", 3)
 
 
-SOL, USDC = "So11111111111111111111111111111111111111112", "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+SOL, USDC, SYSTEM = "So11111111111111111111111111111111111111112", "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", "11111111111111111111111111111111"
 QUOTE = {"srcAmountIn": "100000000", "destAmountOut": "14250000", "destAmountOutMin": "14178750", "swapMode": "ExactIn", "slippage": "50",
          "routePlan": [{"swapInfo": {"ammKey": "a", "label": "l", "inputMint": SOL, "outputMint": USDC, "inAmount": "100000000", "outAmount": "14250000",
                                      "feeAmount": "0", "feeMint": SOL}, "percent": "100", "bps": "10000"}], "requestId": "q-1", "aNewField": "kept"}
@@ -428,6 +428,21 @@ def test_a_rest_quote_422_is_a_route_error_and_neither_refusal_is_retried(plante
     route = failure(lambda: c.cq1_quote(SOL, USDC, 1, 50))
     request = failure(lambda: c.cq1_quote(SOL, USDC, 1, 50))
     assert (route.kind, route.http_status, request.kind, len(planted.requests)) == ("route", 422, "request", 2)
+
+
+def test_a_quote_with_no_route_under_the_account_cap_is_a_route_error_sent_once(planted):
+    planted.answer(200, err(-32055, "no route fits the account cap", why="accounts_over_cap"), times=4)
+    e = failure(lambda: client(planted).quote(src_mint=SOL, dst_mint=USDC, amount_in=1, slippage_bps=50, swapTag=1))
+    assert (e.kind, e.code, e.http_status, e.retryable, len(planted.requests)) == ("route", -32055, 200, False, 1)
+
+
+def test_a_quote_sends_the_account_cap_and_the_integrator_fee_under_their_long_names_and_leaves_unset_ones_out(planted):
+    planted.answer(200, ok({"quoteId": "q"}), times=2)
+    c = client(planted)
+    c.quote(src_mint=SOL, dst_mint=USDC, amount_in=1, slippage_bps=50, maxAccounts=8, integrator_fee_bps=25, integrator_fee_account=SYSTEM)
+    c.quote(src_mint=SOL, dst_mint=USDC, amount_in=1, slippage_bps=50)
+    base = {"src_mint": SOL, "dst_mint": USDC, "amount_in": 1, "slippage_bps": 50}
+    assert [r["json"]["params"] for r in planted.requests] == [{**base, "maxAccounts": 8, "integrator_fee_bps": 25, "integrator_fee_account": SYSTEM}, base]
 
 
 def attribute_walk(root, depth: int = 4) -> list:
