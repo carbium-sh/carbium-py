@@ -27,7 +27,9 @@ if [ -n "${CARBIUM_KEY:-}" ]; then
   echo "$out" | grep -q '^blockhash ' || { echo "with a key the quick start must print the blockhash"; exit 1; }
   echo "$out" | grep -qF "$CARBIUM_KEY" && { echo "the key leaked into the output"; exit 1; }
 else
-  echo "$out" | grep -qE '^auth 401 -32001 ' || { echo "keyless, the quick start must print the 401 refusal"; exit 1; }
+  # with no key services.carbium.sh answers get_latest_blockhash, 30 calls a minute per IP address; on a shared address
+  # that has used them up, the limit's own refusal is the other answer the quick start can print
+  echo "$out" | grep -qE '^(blockhash |rate_limit 429 -32005 PUBLIC_LIMITED )' || { echo "with no key the quick start must print the blockhash, or the public limit's refusal"; exit 1; }
 fi
 echo "--- the stream extra"
 if [ -n "${SMOKE_EXTRA:-}" ]; then

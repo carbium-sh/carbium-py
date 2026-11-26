@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Builds the wheel in a container, then installs it in fresh python slim containers, checks what it holds, imports it
-# and runs the README's quick start. CARBIUM_KEY may be unset: then the quick start must print the 401 refusal.
+# and runs the README's quick start. CARBIUM_KEY may be unset: then the quick start must print the blockhash,
+# or the public limit's refusal.
 # SMOKE_EXTRA=stream installs the wheel with its stream extra and loads it.
 # Usage: scripts/smoke.sh [image ...]   (default: python:3.11-slim python:3.13-slim python:3.15-slim)
 set -euo pipefail

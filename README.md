@@ -18,8 +18,11 @@ notes are at https://github.com/carbium-sh/carbium-py/releases.
 
 ## Quick start
 
-A service key (`c_serv_…`) comes from the dashboard at carbium.sh; put it in `CARBIUM_KEY`. Without one the call
-reaches the door and is refused with 401, which the quick start prints.
+A service key (`c_serv_…`) comes from the dashboard at carbium.sh; put it in `CARBIUM_KEY`. Without one,
+services.carbium.sh answers twelve methods at 30 calls a minute per IP address: `quote`, `swap`, `prices`, `health`
+and the reads `get_health`, `get_version`, `get_slot`, `get_block_height`, `get_epoch_info`, `get_latest_blockhash`,
+`is_blockhash_valid` and `get_genesis_hash`. Every other call is refused
+with 401, which the quick start's `except` prints.
 
 ```python
 import os
